@@ -1,0 +1,21 @@
+{
+  "name": "tictactoe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "babel-preset-react": "^6.1.18",
+    "babelify": "^7.2.0",
+    "install": "^0.3.0",
+    "npm": "^3.4.0",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle": "browserify -t [ babelify --presets [ react ] ] js/app.js -o js/bundle.js"
+  },
+  "author": "Nikitas Frantzeskakis",
+  "license": "ISC"
+}
