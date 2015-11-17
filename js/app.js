@@ -10,7 +10,7 @@ var players = [
     new Player('Player 2', 'O')
 ];
 
-var game = new Game(3,3, players);
+var game = new Game(players);
 
 
 // Top-Level state-holding component
@@ -55,47 +55,38 @@ var GameBoard = React.createClass({
     },
 
     render: function() {
+        var rows=[];
+        console.log(this.state.board);
+        this.state.board.forEach(function (r, idx) {
+            rows.push(<GameRow key={'row-'+idx} row={r} />);
+        }.bind(this));
+
        return (
            <table id="board" onClick={this.clickHandler}>
                 <tbody>
-                    { getChildren(this.state.board) }
+                    { rows }
                 </tbody>
             </table>
         );
 
-        // small helper for readability
-        function getChildren(board) {
-            var rows=[];
-
-            board.forEach(function (r, idx) {
-                rows.push(<GameRow key={'row-'+idx} row={r} />);
-            }.bind(this));
-
-            return rows;
-        }
     }
 });
 
 // a stateless function component
 var GameRow = function (props) {
-    
-    return (
-        <tr>{ getChildren(props.row) }</tr>
-    );
-
-    function getChildren (row) {
-        var cells=[];
+    var cells=[];
         
-        row.forEach(function(cell, idx) {
-            var className='';
-            if (cell) {
-                className='notEmpty';
-            }
-            cells.push(<GameCell key={'cell-'+idx} value={cell} className={className} />);
-        }.bind(this));
-
-        return cells;
-    }
+    props.row.forEach(function(cell, idx) {
+        var className='';
+        if (cell) {
+            className='notEmpty';
+        }
+        cells.push(<GameCell key={'cell-'+idx} value={cell} className={className} />);
+    }.bind(this));
+ 
+    return (
+        <tr>{ cells }</tr>
+    );
 };
 
 var GameCell = function (props) {
