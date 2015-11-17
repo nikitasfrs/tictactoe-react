@@ -4,10 +4,8 @@ var Immutable = require('immutable');
  * Base Tic-Tac-Toe Board API
  *
  */
-function Game (numRows, numCols, players) {
-    var numRows = this.numRows = numRows || 3,
-        numCols = this.numCols = numCols || 3;
-
+function Game (players) {
+    var numRows = numCols = 3;
     this.totalMoves = numRows * numCols;
     this.moveCounter=0;
     this.gameOver=false;
@@ -15,28 +13,18 @@ function Game (numRows, numCols, players) {
 
     this.currentPlayer=this.players[0];
     this.writable=true;
-    this.winningPlayer = null;
+    this.winner = null;
 
+    this.wins = [
+          [0,1,2],[3,4,5],[6,7,8],
+          [0,3,6],[1,4,7],[2,5,8],
+          [0,4,8],[2,4,6]];
+          
     // construct board right away
-    this.board = this.buildBoard(numRows, numCols);
-
-}
-
-/*
- * Builds & initializes board dynamically
- */
-Game.prototype.buildBoard = function (numRows, numCols) {
-    var rows = [],
-        cells, row, col;
-    for (row = 0; row < numRows; row++) {
-        cells = [];
-        for (col = 0; col < numCols; col++) {
-            //cells.push({row: row, column: col, value: null});
-            cells.push(null);
-        }
-        rows.push(cells);
-    }
-    return Immutable.List(rows);
+    this.board = Immutable.List(
+        [[null, null, null],
+         [null, null, null],
+         [null, null, null]]);
 }
 
 Game.prototype.getBoard = function () {
@@ -49,13 +37,13 @@ Game.prototype.getPosValue = function (row, col) {
 }
 
 Game.prototype.markPos = function (row, col) {
-    //return this.setPosValue(row, col, this.currentPlayer.getValue());
+    return this.setPosValue(row, col, this.currentPlayer.getValue());
 
-    return {
+    /*return {
         board: this.setPosValue(row, col, this.currentPlayer.getValue()),
         gameOver: this.gameOver,
-        winner: this.winningPlayer
-    }
+        winner: this.winner
+    }*/
     // this should return a state object 
 }
 
@@ -110,12 +98,12 @@ Game.prototype.checkForWin = function () {
     //TODO
     // return an array of respective row/column objects
     //
-    if (this.winningPlayer) {
+    if (this.winner) {
         return true;
     } else {
 
         // set gameIsOver to true
-        // and this.winningPlayer
+        // and this.winner
         return false;
     }
 }
