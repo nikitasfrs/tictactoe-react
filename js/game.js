@@ -26,7 +26,7 @@ function Game (numRows, numCols, players) {
  * Builds & initializes board dynamically
  */
 Game.prototype.buildBoard = function (numRows, numCols) {
-    var rows = [],
+    /*var rows = [],
         cells, row, col;
     for (row = 0; row < numRows; row++) {
         cells = [];
@@ -35,8 +35,45 @@ Game.prototype.buildBoard = function (numRows, numCols) {
             cells.push(null);
         }
         rows.push(cells);
+    }*/
+    var board = [null, null, null,
+                null, null, null,
+                null, null, null];
+
+    return Immutable.List(board);
+}
+
+Game.prototype.getSingleIndex = function (row, col) {
+    var offset,result;
+    switch (row) {
+        case 0:
+            offset=1;
+            break;
+        case 1:
+            offset=3;
+            break;
+        case 2:
+            offset=4;
+            break;
     }
-    return Immutable.List(rows);
+    result = offset+col; 
+    return result;
+}
+
+Game.prototype.getDimensions = function(idx) {
+    var offset, row=0, col;
+    if (idx <= 3) {
+        offset = 1;
+        row = 0;
+    } else if (idx <= 5) {
+        row= 1;
+        offset = 3;
+    } else if (idx <= 8) {
+        row=2;
+        offset=6;
+    }
+    col = idx - offset;
+    return {row:row, col:col};
 }
 
 Game.prototype.getBoard = function () {
@@ -45,39 +82,53 @@ Game.prototype.getBoard = function () {
 
 Game.prototype.getPosValue = function (row, col) {
     //return this.board[row][col].value;
-    return this.board[row][col];
+    //return this.board[row][col];
+    var idx = this.getSingleIndex(row,col);
+    return this.board[idx];
 }
 
 Game.prototype.markPos = function (row, col) {
     //return this.setPosValue(row, col, this.currentPlayer.getValue());
-
+    var idx = this.getSingleIndex(row, col);
     return {
-        board: this.setPosValue(row, col, this.currentPlayer.getValue()),
+        board: this._setPosValue(idx, this.currentPlayer.getValue()),
         gameOver: this.gameOver,
         winner: this.winningPlayer
     }
     // this should return a state object 
 }
 
-Game.prototype.setPosValue = function (row, col, value) {
-   var result, rowArr;
+Game.prototype._getNestedBoard = function(board) {
+    var newArr = new Array();
+
+    for (var i=0; i<board.length; i=i+3) {
+        newArr.push(board.slice(i,i+3));
+    }
+    return newArr;
+}
+
+Game.prototype._setPosValue = function (idx, value) {
+   //var result, rowArr, idx;
 
    // In case we run out of free positions or 
    // specified position is not empty return false
    if (this.gameIsOver() ||
        !this.hasMoreMoves() ||
-        this.posIsTaken(row, col)) {
+        this.posIsTaken(idx)) {
        return false;
    }
-
+ 
+   //idx = this.getSingleIndex(row, col);
 
 
    // get row array from the Immutable List
    // replace column value and set edited array
    // back to list resulting a new Immutable List object
-   rowArr = this.board.get(row);
+   /*rowArr = this.board.get(row);
    rowArr[col] = value;
-   this.board = this.board.set(row, rowArr);
+   this.board = this.board.set(row, rowArr);*/
+
+   this.board = this.board.set(idx, value);
 
 
    // increment counter, change player, see if anyone wins 
@@ -97,9 +148,9 @@ Game.prototype.incrementCounter = function () {
     return this;
 }
 
-Game.prototype.posIsTaken = function (row, col) {
+Game.prototype.posIsTaken = function (idx) {
     //return this.board[row][col].value !== null;
-    return this.board.get(row)[col] !== null;
+    return this.board.get(idx) !== null;
 }
 
 Game.prototype.gameIsOver = function () {
