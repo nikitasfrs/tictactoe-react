@@ -31,10 +31,12 @@ body {
 }
 
 #board td.notEmpty:hover,
-#board td.notEmpty:active {
+#board td.notEmpty:active,
+#board td.hot:hover,
+#board td.hot:active {
     background-color:white;
 }
 
-#board td.win {
-    text-color: red;
+#board td.hot {
+    color: #09E52E;
 }

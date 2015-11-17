@@ -10,16 +10,19 @@ var players = [
     new Player('Player 2', 'O')
 ];
 
-var game = new Game(3,3, players);
+var game = new Game(players);
 
 
 // Top-Level state-holding component
-var GameBoard = React.createClass({
+var TicTacToe = React.createClass({
     getInitialState: function() {
         this.initialGame = this.props.initialGame;
 
         return {
-            board: this.initialGame.getBoard()
+            board: this.initialGame.getBoard(),
+            gameOver: false,
+            winner: null,
+            winCombo: []
         };
     },
 
@@ -34,19 +37,14 @@ var GameBoard = React.createClass({
         var col = e.target.cellIndex,
             row = e.target.parentNode.rowIndex,
             text = e.target.textContent,
-            newBoard;
+            newState;
 
         // check if space between cell borders was 
         // clicked or current cell is not empty
         if (row >= 0 && col >= 0 && !text ) {
-            console.log('col: ' + col);
-            console.log('row: ' + row);
 
-            newBoard = this.initialGame.markPos(row, col);
-
-            this.setState({
-                board: newBoard
-            });
+            newState = this.initialGame.markPos(row, col);
+            this.setState(newState);
         }
         
         // proper react synthetic-event way
@@ -55,43 +53,66 @@ var GameBoard = React.createClass({
     },
 
     render: function() {
-       return (
-           <table id="board" onClick={this.clickHandler}>
-                <tbody>
-                    { getChildren(this.state.board) }
-                </tbody>
+        return (
+            <table id="board" onClick={this.clickHandler}>
+                <GameBoard board={this.state.board} winCombo={this.state.winCombo} />
             </table>
         );
-
-        // small helper for readability
-        function getChildren(board) {
-            var rows=[];
-
-            board.forEach(function (r, idx) {
-                rows.push(<GameRow key={'row-'+idx} row={r} />);
-            }.bind(this));
-
-            return rows;
-        }
     }
 });
 
-// a stateless function component
-var GameRow = function (props) {
-    
+
+var GameBoard = function(props) {
+    var data, gameRows=[], key=0;;
+
+    for (var i = 0; i < 9; i+=3) {
+        data = {
+            row: props.board.slice(i, i+3)
+        }
+        gameRows.push(<GameRow key={key} data={data} />);
+        key+=1;
+    }
+
     return (
-        <tr>{ getChildren(props.row) }</tr>
+        <tbody>
+            { gameRows }
+        </tbody>
     );
 
-    function getChildren (row) {
+    
+}
+
+// a stateless function component
+var GameRow = function (props) {
+    var row = props.data.row,
+        //hot = props.data.hot;
+        hot=false;
+    //console.log(hot)
+    
+    return (
+        <tr>{ createCells(row) }</tr>
+    );
+
+    function createCells (row) {
         var cells=[];
         
         row.forEach(function(cell, idx) {
             var className='';
-            if (cell) {
-                className='notEmpty';
+            if (typeof cell === 'object' && cell !== null) {
+               hot=true;
+               console.log(cell);
+               cell = cell.value;
             }
-            cells.push(<GameCell key={'cell-'+idx} value={cell} className={className} />);
+                
+            else if (cell) {
+                className='notEmpty';
+            } 
+
+            if (hot) {
+                className='hot';
+            }
+
+            cells.push(<GameCell key={idx} value={cell} className={className} />);
         }.bind(this));
 
         return cells;
@@ -103,6 +124,6 @@ var GameCell = function (props) {
 };
 
 ReactDOM.render(
-    <GameBoard initialGame={game}/>,
+    <TicTacToe initialGame={game}/>,
     document.getElementById('app')
 );

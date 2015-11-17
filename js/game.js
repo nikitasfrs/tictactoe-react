@@ -4,7 +4,7 @@ var Immutable = require('immutable');
  * Base Tic-Tac-Toe Board API
  *
  */
-function Game (numRows, numCols, players) {
+function Game (players) {
     var numRows = this.numRows = numRows || 3,
         numCols = this.numCols = numCols || 3;
 
@@ -17,94 +17,89 @@ function Game (numRows, numCols, players) {
     this.writable=true;
     this.winningPlayer = null;
 
-    // construct board right away
-    this.board = this.buildBoard(numRows, numCols);
+    this.wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]];
+
+    this.board = this.initBoard();
 
 }
 
 /*
  * Builds & initializes board dynamically
  */
-Game.prototype.buildBoard = function (numRows, numCols) {
-    /*var rows = [],
-        cells, row, col;
-    for (row = 0; row < numRows; row++) {
-        cells = [];
-        for (col = 0; col < numCols; col++) {
-            //cells.push({row: row, column: col, value: null});
-            cells.push(null);
-        }
-        rows.push(cells);
-    }*/
-    var board = [null, null, null,
-                null, null, null,
-                null, null, null];
-
-    return Immutable.List(board);
+Game.prototype.initBoard = function () {
+    return Immutable.List([
+        null, null, null,
+        null, null, null,
+        null, null, null
+    ]);
 }
 
-Game.prototype.getSingleIndex = function (row, col) {
-    var offset,result;
-    switch (row) {
-        case 0:
-            offset=1;
-            break;
-        case 1:
-            offset=3;
-            break;
-        case 2:
-            offset=4;
-            break;
-    }
-    result = offset+col; 
+/**
+ * Helper that transforms row/column values to 
+ * corresponding indices for easy array access.
+ */
+Game.prototype._getSingleIndex = function (row, col) {
+    var offset, result;
+
+    offset = row * 3;
+    result = col % 3 + offset; 
     return result;
 }
 
-Game.prototype.getDimensions = function(idx) {
-    var offset, row=0, col;
-    if (idx <= 3) {
-        offset = 1;
-        row = 0;
-    } else if (idx <= 5) {
-        row= 1;
-        offset = 3;
-    } else if (idx <= 8) {
-        row=2;
-        offset=6;
-    }
-    col = idx - offset;
-    return {row:row, col:col};
-}
 
 Game.prototype.getBoard = function () {
     return this.board.toArray();
 }
 
-Game.prototype.getPosValue = function (row, col) {
-    //return this.board[row][col].value;
-    //return this.board[row][col];
-    var idx = this.getSingleIndex(row,col);
-    return this.board[idx];
-}
-
 Game.prototype.markPos = function (row, col) {
-    //return this.setPosValue(row, col, this.currentPlayer.getValue());
-    var idx = this.getSingleIndex(row, col);
+    var idx = this._getSingleIndex(row, col),
+        value = this.currentPlayer.getValue(),
+        newList, that=this,
+        win;
+
+    // make new move and scan board
+    // to find winning combo
+    winCombo = this._setPosValue(idx,value).findWinner();
+
+    //TODO 
+    //if we have a winner
+    //replace all winning positions with {value: X/O, hot:true}
+    //objects
+
+    if (winCombo.length == 3) {
+        
+        winCombo.forEach(function(idx) {
+            var currentValue = this.board.get(idx);
+            this.board = this.board.set(idx, {
+                value: currentValue,
+                hot:true
+            }); 
+
+        }.bind(this));
+/*
+        newList = this.board.withMutations(function(list) {
+            winCombo.forEach(function(idx) {
+                var currentValue = list.get(idx);
+                list.set(idx, {
+                    value: currentValue,
+                    hot:true
+                }); 
+
+            }.bind(that))
+        }
+        this.board = newList;*/
+    }
+
     return {
-        board: this._setPosValue(idx, this.currentPlayer.getValue()),
+        board: this.getBoard(),
         gameOver: this.gameOver,
-        winner: this.winningPlayer
+        winner: this.winningPlayer,
+        winCombo: winCombo
     }
     // this should return a state object 
-}
-
-Game.prototype._getNestedBoard = function(board) {
-    var newArr = new Array();
-
-    for (var i=0; i<board.length; i=i+3) {
-        newArr.push(board.slice(i,i+3));
-    }
-    return newArr;
 }
 
 Game.prototype._setPosValue = function (idx, value) {
@@ -118,24 +113,10 @@ Game.prototype._setPosValue = function (idx, value) {
        return false;
    }
  
-   //idx = this.getSingleIndex(row, col);
-
-
-   // get row array from the Immutable List
-   // replace column value and set edited array
-   // back to list resulting a new Immutable List object
-   /*rowArr = this.board.get(row);
-   rowArr[col] = value;
-   this.board = this.board.set(row, rowArr);*/
-
    this.board = this.board.set(idx, value);
 
-
-   // increment counter, change player, see if anyone wins 
-   this.incrementCounter().togglePlayer().checkForWin();
-
-   // return board?
-   return this.getBoard();
+   // returns this 
+   return this.incrementCounter().togglePlayer();
 }
 
 
@@ -148,6 +129,21 @@ Game.prototype.incrementCounter = function () {
     return this;
 }
 
+Game.prototype._getDimensions = function(idx) {
+    var offset, row=0, col;
+    
+    if (idx < 3) {
+        row = 0;
+    } else if (idx < 6) {
+        row = 1;
+    } else if (idx < 9) {
+        row = 2;
+    }
+
+    col = idx % 3;
+    return {row:row, col:col};
+}
+
 Game.prototype.posIsTaken = function (idx) {
     //return this.board[row][col].value !== null;
     return this.board.get(idx) !== null;
@@ -157,17 +153,34 @@ Game.prototype.gameIsOver = function () {
     return this.gameOver;
 }
 
-Game.prototype.checkForWin = function () {
+Game.prototype.findWinner = function () {
     //TODO
     // return an array of respective row/column objects
-    //
+
+    // helper for easy array access
+    var s = function (index) {
+        return this.board.get(index);
+    }.bind(this);
+
+    var w = this.wins;
+
     if (this.winningPlayer) {
         return true;
     } else {
 
+        for (var i = 0; i < 8; i++) {
+            if (s(w[i][0]) === s(w[i][1]) 
+            && s(w[i][0]) === s(w[i][2]) 
+            && s(w[i][0]) != null) {
+
+                //return s(w[i][0]);
+                return w[i];
+            }
+        }
+
         // set gameIsOver to true
         // and this.winningPlayer
-        return false;
+        return [];
     }
 }
 
