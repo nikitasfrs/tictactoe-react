@@ -24,6 +24,7 @@ body {
 
 #board td:hover {
     background-color:#FFE4B2;
+    cursor:pointer;
 }
 
 #board td:active {
@@ -33,6 +34,7 @@ body {
 #board td.notEmpty:hover,
 #board td.notEmpty:active {
     background-color:white;
+    cursor:default;
 }
 
 #board td.win {
