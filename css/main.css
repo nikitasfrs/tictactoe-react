@@ -12,6 +12,14 @@ body {
     margin-right:auto;
 }
 
+strong {
+    font-weight:700;
+}
+
+#controls { 
+    padding-bottom:1em;
+}
+
 #board td {
     padding: 1em;
     border:1px solid black;
@@ -23,7 +31,8 @@ body {
 }
 
 #board td:hover {
-    background-color:#FFE4B2;
+    //background-color:#FFE4B2;
+    cursor:pointer;
 }
 
 #board td:active {
@@ -33,8 +42,11 @@ body {
 #board td.notEmpty:hover,
 #board td.notEmpty:active,
 #board td.hot:hover,
-#board td.hot:active {
+#board td.hot:active,
+#board.over td:hover,
+#board.over td:active{
     background-color:white;
+    cursor:default;
 }
 
 #board td.hot {
