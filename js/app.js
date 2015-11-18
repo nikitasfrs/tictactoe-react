@@ -49,7 +49,6 @@ var TicTacToe = React.createClass({
             !text && !gameOver) {
 
             newState = this.initGame.markPos(row, col);
-            console.log('newState: ' + newState.gameOver);
             this.setState(newState);
         }
         
@@ -127,7 +126,6 @@ var GameRow = function (props) {
             if (cell != null && cell.hot) {
                value = cell.value;
                className='hot';
-               console.log('cell ' + cell);
             }
                 
             else if (cell) {
