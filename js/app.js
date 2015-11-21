@@ -59,6 +59,7 @@ var TicTacToe = React.createClass({
 
     controlsClickAction: function(e) {
         var newState, className = e.target.className;
+        e.preventDefault();
         if (className == "playAgain") {
            newState = this.props.initGame.resetGame();
            this.setState(newState);
@@ -68,10 +69,12 @@ var TicTacToe = React.createClass({
 
     render: function() {
         var controls='', className='', data={};
+        var clickHandler = this.controlsClickAction;
         if (this.state.gameOver) {
             className='over';
             data = {
-                winner: this.state.winner
+                winner: this.state.winner,
+                clickHandler: this.controlsClickAction
             }
             controls = (<GameControls data={data} />);
         }
@@ -80,7 +83,7 @@ var TicTacToe = React.createClass({
                 <table id="board" className={className} onClick={this.cellClickAction}>
                     <GameBoard board={this.state.board} />
                 </table>
-                <div id="controls" onClick={this.controlsClickAction}>
+                <div id="controls">
                     { controls }
                 </div>
             </div>
@@ -148,9 +151,10 @@ var GameControls = function(props) {
         render: function() {
             var winner = this.props.data.winner,
                 str=notification='', elems,
+                clickHandler = this.props.data.clickHandler,
                 playAgain;
 
-            playAgain = <a href="#" className="playAgain" onClick={this.linkClicked}>Play again</a>;
+            playAgain = <a href="#" className="playAgain" onClick={clickHandler} >Play again</a>;
             if (winner) {
                 str=winner + ' won!';
                 elems = <p><strong>{str}</strong> {playAgain} </p>
@@ -162,10 +166,6 @@ var GameControls = function(props) {
             return (
                     <div>{ elems }</div>
             );
-        },
-
-        linkClicked: function(e) {
-            e.preventDefault();
         }
     }
 }

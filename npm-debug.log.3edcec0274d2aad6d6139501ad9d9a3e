@@ -1,0 +1,43 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'run', 'bundle' ]
+2 info using npm@3.3.9
+3 info using node@v4.2.1
+4 verbose run-script [ 'prebundle', 'bundle', 'postbundle' ]
+5 info lifecycle tictactoe@1.0.0~prebundle: tictactoe@1.0.0
+6 silly lifecycle tictactoe@1.0.0~prebundle: no script for prebundle, continuing
+7 info lifecycle tictactoe@1.0.0~bundle: tictactoe@1.0.0
+8 verbose lifecycle tictactoe@1.0.0~bundle: unsafe-perm in lifecycle true
+9 verbose lifecycle tictactoe@1.0.0~bundle: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/var/www/html/tictactoe/node_modules/.bin:/home/vagrant/.rvm/gems/ruby-1.9.3-p547/bin:/home/vagrant/.rvm/gems/ruby-1.9.3-p547@global/bin:/home/vagrant/.rvm/rubies/ruby-1.9.3-p547/bin:/home/vagrant/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/vagrant_ruby/bin:/home/vagrant/.rvm/bin:/home/vagrant/bin:/home/vagrant/.rvm/bin
+10 verbose lifecycle tictactoe@1.0.0~bundle: CWD: /var/www/html/tictactoe
+11 silly lifecycle tictactoe@1.0.0~bundle: Args: [ '-c',
+11 silly lifecycle   'browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js' ]
+12 silly lifecycle tictactoe@1.0.0~bundle: Returned: code: 1  signal: null
+13 info lifecycle tictactoe@1.0.0~bundle: Failed to exec bundle script
+14 verbose stack Error: tictactoe@1.0.0 bundle: `browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:233:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:818:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid tictactoe@1.0.0
+16 verbose cwd /var/www/html/tictactoe
+17 error Linux 3.13.0-37-generic
+18 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "bundle"
+19 error node v4.2.1
+20 error npm  v3.3.9
+21 error code ELIFECYCLE
+22 error tictactoe@1.0.0 bundle: `browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js`
+22 error Exit status 1
+23 error Failed at the tictactoe@1.0.0 bundle script 'browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js'.
+23 error This is most likely a problem with the tictactoe package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js
+23 error You can get their info via:
+23 error     npm owner ls tictactoe
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]
