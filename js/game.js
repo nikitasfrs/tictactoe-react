@@ -199,9 +199,8 @@ Game.prototype._scanBoard = function () {
     if (this.winner) {
         return true;
     } else {
-        // This section was inspired by this:
+        // This section was inspired by:
         // http://mkuklis.github.io/tictactoe/docs/tictactoe.html
-        // Credits go to Michal Kuklis
 
         for (var i = 0; i < 8; i++) {
             if (s(w[i][0]) === s(w[i][1]) 
