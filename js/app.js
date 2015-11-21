@@ -56,7 +56,6 @@ var TicTacToe = React.createClass({
         // to bubble no further up the DOM tree
         e.stopPropagation();
     },
-
     controlsClickAction: function(e) {
         var newState, className = e.target.className;
         e.preventDefault();
@@ -66,7 +65,6 @@ var TicTacToe = React.createClass({
         }
         e.stopPropagation();
     },
-
     render: function() {
         var controls='', className='', data={};
         var clickHandler = this.controlsClickAction;
@@ -104,7 +102,6 @@ var GameBoard = function(props) {
         gameRows.push(<GameRow key={key} data={data} />);
         key+=1;
     }
-
     return (
         <tbody>
             { gameRows }
@@ -121,18 +118,14 @@ var GameRow = function (props) {
 
     function createCells (row) {
         var cells=[];
-
         row.forEach(function(cell, idx) {
             var className='', value=cell;
-
             if (cell != null && cell.hot) {
                value = cell.value;
                className='hot';
-
             } else if (cell) {
                 className='notEmpty';
             } 
-
             cells.push(<GameCell key={idx} value={value} className={className} />);
         }.bind(this));
 
@@ -151,7 +144,6 @@ var GameControls = function(props) {
         playAgain;
 
     playAgain = <a href="#" className="playAgain" onClick={clickHandler}>Play again</a>;
-
     if (winner) {
         str=winner + ' won!';
         elems = <p><strong>{str}</strong> {playAgain} </p>
