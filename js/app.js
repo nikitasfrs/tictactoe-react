@@ -128,9 +128,8 @@ var GameRow = function (props) {
             if (cell != null && cell.hot) {
                value = cell.value;
                className='hot';
-            }
-                
-            else if (cell) {
+
+            } else if (cell) {
                 className='notEmpty';
             } 
 
@@ -146,28 +145,22 @@ var GameCell = function (props) {
 };
 
 var GameControls = function(props) {
-    return {
-        props: props,
-        render: function() {
-            var winner = this.props.data.winner,
-                str=notification='', elems,
-                clickHandler = this.props.data.clickHandler,
-                playAgain;
+    var winner = props.data.winner,
+        str=notification='', elems,
+        clickHandler = props.data.clickHandler,
+        playAgain;
 
-            playAgain = <a href="#" className="playAgain" onClick={clickHandler} >Play again</a>;
-            if (winner) {
-                str=winner + ' won!';
-                elems = <p><strong>{str}</strong> {playAgain} </p>
-            } else {
-                str="Draw. No one wins :( "
-                elems = <p>{str}{playAgain}</p>
-            }
+    playAgain = <a href="#" className="playAgain" onClick={clickHandler}>Play again</a>;
 
-            return (
-                    <div>{ elems }</div>
-            );
-        }
+    if (winner) {
+        str=winner + ' won!';
+        elems = <p><strong>{str}</strong> {playAgain} </p>
+    } else {
+        str="Draw. No one wins :( "
+        elems = <p>{str}{playAgain}</p>
     }
+
+    return (<div>{ elems }</div>);
 }
 
 ReactDOM.render(
