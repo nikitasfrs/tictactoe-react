@@ -1,6 +1,6 @@
 #Tic-Tac-Toe!
 
-Small project I made to learn React and ImmutableJS.
+Small project I made while learning React and ImmutableJS.
 
 ![Screenshot](https://raw.githubusercontent.com/nikitasfrs/tictactoe-react/screenshots/screen1.png?raw=true)
 
