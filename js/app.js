@@ -91,6 +91,7 @@ var TicTacToe = React.createClass({
     }
 });
 
+// a stateless function component
 var GameBoard = function(props) {
     var data, gameRows=[], key=0;;
 
@@ -111,7 +112,6 @@ var GameBoard = function(props) {
     );
 }
 
-// a stateless function component
 var GameRow = function (props) {
     var row = props.data.row;
     
