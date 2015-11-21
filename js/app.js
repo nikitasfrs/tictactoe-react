@@ -66,24 +66,28 @@ var TicTacToe = React.createClass({
         e.stopPropagation();
     },
     render: function() {
-        var controls='', className='', data={};
-        var clickHandler = this.controlsClickAction;
+        var controls = '', className = '',
+            dataBoard = dataControls = {};
+
         if (this.state.gameOver) {
-            className='over';
-            data = {
+            className = 'over';
+            dataControls = {
                 winner: this.state.winner,
                 clickHandler: this.controlsClickAction
             }
-            controls = (<GameControls data={data} />);
+            controls = (<GameControls data={dataControls} />);
         }
+
+        dataBoard = { 
+            className: className,
+            board: this.state.board,
+            clickHandler: this.cellClickAction
+        };
+
         return (
             <div id="wrapper">
-                <table id="board" className={className} onClick={this.cellClickAction}>
-                    <GameBoard board={this.state.board} />
-                </table>
-                <div id="controls">
-                    { controls }
-                </div>
+                <GameBoard data={dataBoard} />
+                { controls }
             </div>
         );
     }
@@ -91,21 +95,26 @@ var TicTacToe = React.createClass({
 
 // a stateless function component
 var GameBoard = function(props) {
-    var data, gameRows=[], key=0;;
+    var data, gameRows=[], key=0,
+        className = props.data.className,
+        board = props.data.board,
+        clickHandler = props.data.clickHandler; 
 
     // break sequential array into 
     // 3 smaller arrays to be rendered as rows
     for (var i = 0; i < 9; i+=3) {
         data = {
-            row: props.board.slice(i, i+3)
+            row: board.slice(i, i+3)
         }
         gameRows.push(<GameRow key={key} data={data} />);
         key+=1;
     }
     return (
-        <tbody>
-            { gameRows }
-        </tbody>
+        <table id="board" className={className} onClick={clickHandler} >
+            <tbody>
+                { gameRows }
+            </tbody>
+        </table>
     );
 }
 
@@ -152,7 +161,7 @@ var GameControls = function(props) {
         elems = <p>{str}{playAgain}</p>
     }
 
-    return (<div>{ elems }</div>);
+    return (<div id="controls">{ elems }</div>);
 }
 
 ReactDOM.render(
