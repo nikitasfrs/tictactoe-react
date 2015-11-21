@@ -92,6 +92,8 @@ var TicTacToe = React.createClass({
 var GameBoard = function(props) {
     var data, gameRows=[], key=0;;
 
+    // break sequential array into 
+    // 3 smaller arrays to be rendered as rows
     for (var i = 0; i < 9; i+=3) {
         data = {
             row: props.board.slice(i, i+3)
