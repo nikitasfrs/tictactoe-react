@@ -21,5 +21,5 @@
     "bundle": "browserify -t [ babelify --presets [ react ] ] -g uglifyify js/app.js -o js/bundle.js"
   },
   "author": "Nikitas Frantzeskakis",
-  "license": "ISC"
+  "license": "MIT"
 }
