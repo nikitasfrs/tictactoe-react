@@ -1,6 +1,6 @@
-#Tic Tac Toe
+#Tic-Tac-Toe!
 
-Smalle project I made to learn React and ImmutableJS.
+Small project I made to learn React and ImmutableJS.
 
 ### Install
 
