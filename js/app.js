@@ -1,9 +1,14 @@
+/**
+ *
+ * Reactive Tic-Tac-Toe UI
+ * Author: Nikitas Frantzeskakis
+ *
+ */
+
 var React = require('react');
 var ReactDOM = require('react-dom');
-
 var Game = require('./game').Game;
 var Player = require('./game').Player;
-
 
 var players = [
     new Player('Player 1', 'X'),
@@ -14,12 +19,14 @@ var game = new Game(players);
 
 
 // Top-Level state-holding component
-var GameBoard = React.createClass({
+var TicTacToe = React.createClass({
     getInitialState: function() {
-        this.initialGame = this.props.initialGame;
+        this.initGame = this.props.initGame;
 
         return {
-            board: this.initialGame.getBoard()
+            board: this.initGame.getBoard(),
+            gameOver: false,
+            winner: null
         };
     },
 
@@ -30,23 +37,19 @@ var GameBoard = React.createClass({
         return this.state.board !== nextState.board;
     },
 
-    clickHandler: function (e) {
+    cellClickAction: function (e) {
         var col = e.target.cellIndex,
             row = e.target.parentNode.rowIndex,
             text = e.target.textContent,
-            newBoard;
+            gameOver = this.state.gameOver, newState;
 
         // check if space between cell borders was 
         // clicked or current cell is not empty
-        if (row >= 0 && col >= 0 && !text ) {
-            console.log('col: ' + col);
-            console.log('row: ' + row);
+        if (row >= 0 && col >= 0 &&
+            !text && !gameOver) {
 
-            newBoard = this.initialGame.markPos(row, col);
-
-            this.setState({
-                board: newBoard
-            });
+            newState = this.initGame.markPos(row, col);
+            this.setState(newState);
         }
         
         // proper react synthetic-event way
@@ -54,46 +57,120 @@ var GameBoard = React.createClass({
         e.stopPropagation();
     },
 
+    controlsClickAction: function(e) {
+        var newState, className = e.target.className;
+        if (className == "playAgain") {
+           newState = this.props.initGame.resetGame();
+           this.setState(newState);
+        }
+        e.stopPropagation();
+    },
+
     render: function() {
-        var rows=[];
-        console.log(this.state.board);
-        this.state.board.forEach(function (r, idx) {
-            rows.push(<GameRow key={'row-'+idx} row={r} />);
-        }.bind(this));
-
-       return (
-           <table id="board" onClick={this.clickHandler}>
-                <tbody>
-                    { rows }
-                </tbody>
-            </table>
+        var controls='', className='', data={};
+        if (this.state.gameOver) {
+            className='over';
+            data = {
+                winner: this.state.winner
+            }
+            controls = (<GameControls data={data} />);
+        }
+        return (
+            <div id="wrapper">
+                <table id="board" className={className} onClick={this.cellClickAction}>
+                    <GameBoard board={this.state.board} />
+                </table>
+                <div id="controls" onClick={this.controlsClickAction}>
+                    { controls }
+                </div>
+            </div>
         );
-
     }
 });
 
+var GameBoard = function(props) {
+    var data, gameRows=[], key=0;;
+
+    // break sequential array into 
+    // 3 smaller arrays to be rendered as rows
+    for (var i = 0; i < 9; i+=3) {
+        data = {
+            row: props.board.slice(i, i+3)
+        }
+        gameRows.push(<GameRow key={key} data={data} />);
+        key+=1;
+    }
+
+    return (
+        <tbody>
+            { gameRows }
+        </tbody>
+    );
+}
+
 // a stateless function component
 var GameRow = function (props) {
-    var cells=[];
-        
-    props.row.forEach(function(cell, idx) {
-        var className='';
-        if (cell) {
-            className='notEmpty';
-        }
-        cells.push(<GameCell key={'cell-'+idx} value={cell} className={className} />);
-    }.bind(this));
- 
+    var row = props.data.row;
+    
     return (
-        <tr>{ cells }</tr>
+        <tr>{ createCells(row) }</tr>
     );
+
+    function createCells (row) {
+        var cells=[];
+
+        row.forEach(function(cell, idx) {
+            var className='', value=cell;
+
+            if (cell != null && cell.hot) {
+               value = cell.value;
+               className='hot';
+            }
+                
+            else if (cell) {
+                className='notEmpty';
+            } 
+
+            cells.push(<GameCell key={idx} value={value} className={className} />);
+        }.bind(this));
+
+        return cells;
+    }
 };
 
 var GameCell = function (props) {
     return (<td className={props.className}>{props.value}</td>);
 };
 
+var GameControls = function(props) {
+    return {
+        props: props,
+        render: function() {
+            var winner = this.props.data.winner,
+                str=notification='', elems,
+                playAgain;
+
+            playAgain = <a href="#" className="playAgain" onClick={this.linkClicked}>Play again</a>;
+            if (winner) {
+                str=winner + ' won!';
+                elems = <p><strong>{str}</strong> {playAgain} </p>
+            } else {
+                str="Draw. No one wins :( "
+                elems = <p>{str}{playAgain}</p>
+            }
+
+            return (
+                    <div>{ elems }</div>
+            );
+        },
+
+        linkClicked: function(e) {
+            e.preventDefault();
+        }
+    }
+}
+
 ReactDOM.render(
-    <GameBoard initialGame={game}/>,
+    <TicTacToe initGame={game}/>,
     document.getElementById('app')
 );
