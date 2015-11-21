@@ -29,22 +29,19 @@ var TicTacToe = React.createClass({
             winner: null
         };
     },
-
     shouldComponentUpdate: function (nextProps, nextState) {
 
         // we owe the simplicity of this to the
         // Immutable data structure used in Game object
         return this.state.board !== nextState.board;
     },
-
-    cellClickAction: function (e) {
+    boardClickAction: function (e) {
         var col = e.target.cellIndex,
             row = e.target.parentNode.rowIndex,
             text = e.target.textContent,
             gameOver = this.state.gameOver, newState;
 
-        // check if space between cell borders was 
-        // clicked or current cell is not empty
+        // when empty cells get clicked
         if (row >= 0 && col >= 0 &&
             !text && !gameOver) {
 
@@ -81,7 +78,7 @@ var TicTacToe = React.createClass({
         dataBoard = { 
             className: className,
             board: this.state.board,
-            clickHandler: this.cellClickAction
+            clickHandler: this.boardClickAction
         };
 
         return (
