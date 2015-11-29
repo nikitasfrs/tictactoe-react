@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "mocha --opts ./specs/mocha.opts specs/**/*.spec.js",
-    "bundle": "browserify -t [ babelify --presets [ react ] ] -g uglifyify main.js -o ./bundle.js"
+    "bundle": "browserify -t [ babelify --presets [ react ] ] -g uglifyify app.js -o ./bundle.js"
   },
   "author": "Nikitas Frantzeskakis",
   "license": "MIT"
