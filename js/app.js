@@ -106,6 +106,7 @@ var GameBoard = function(props) {
         gameRows.push(<GameRow key={key} data={data} />);
         key+=1;
     }
+
     return (
         <table id="board" className={className} onClick={clickHandler} >
             <tbody>
@@ -116,27 +117,22 @@ var GameBoard = function(props) {
 }
 
 var GameRow = function (props) {
-    var row = props.data.row;
-    
+    var row = props.data.row, cells;
+    cells = row.map(function(cell, idx) {
+        var className='', value=cell;
+        if (cell != null && cell.hot) {
+           value = cell.value;
+           className='hot';
+        } else if (cell) {
+            className='notEmpty';
+        } 
+        return (<GameCell key={idx} value={value} className={className} />);
+    });
+
     return (
-        <tr>{ createCells(row) }</tr>
+        <tr>{ cells }</tr>
     );
 
-    function createCells (row) {
-        var cells=[];
-        row.forEach(function(cell, idx) {
-            var className='', value=cell;
-            if (cell != null && cell.hot) {
-               value = cell.value;
-               className='hot';
-            } else if (cell) {
-                className='notEmpty';
-            } 
-            cells.push(<GameCell key={idx} value={value} className={className} />);
-        }.bind(this));
-
-        return cells;
-    }
 };
 
 var GameCell = function (props) {
@@ -165,3 +161,5 @@ ReactDOM.render(
     <TicTacToe initGame={game}/>,
     document.getElementById('app')
 );
+
+module.exports.TicTacToe = TicTacToe;
